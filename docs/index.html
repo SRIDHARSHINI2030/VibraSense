@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VibraSense is a vibration signal analysis project built using GNU Octave, featuring signal preprocessing, feature extraction, FFT analysis and rule-based condition assessment.">
+  <title>VibraSense | Vibration Signal Analysis</title>
+  <style>
+    :root {
+      --green: #244b3c;
+      --olive: #78866b;
+      --cream: #f7f5ef;
+      --ink: #25332d;
+      --muted: #69756e;
+      --line: #e3e5dc;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.7;
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(1080px, 90%);
+      margin: auto;
+    }
+
+    header {
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 245, 239, 0.96);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 1.3rem;
+      font-weight: 750;
+      color: var(--green);
+      letter-spacing: -0.5px;
+    }
+
+    nav a {
+      text-decoration: none;
+      margin-left: 22px;
+      font-size: 0.92rem;
+    }
+
+    .hero {
+      padding: 90px 0 80px;
+      background: linear-gradient(130deg, #f7f5ef, #e7ece2);
+    }
+
+    .eyebrow {
+      color: var(--olive);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 18px 0;
+      color: var(--green);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.1;
+      letter-spacing: -2px;
+    }
+
+    .hero p {
+      max-width: 690px;
+      color: var(--muted);
+      font-size: 1.12rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 11px 19px;
+      border: 1px solid var(--green);
+      border-radius: 6px;
+      background: var(--green);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--green);
+    }
+
+    section { padding: 65px 0; }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-size: 2rem;
+      letter-spacing: -0.7px;
+    }
+
+    .intro {
+      max-width: 720px;
+      margin-bottom: 30px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fffefa;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: var(--green);
+    }
+
+    .card p, .card li { color: var(--muted); }
+
+    .card ul { padding-left: 20px; }
+
+    .technical {
+      background: #edf0e8;
+    }
+
+    .figure {
+      margin: 24px 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+    }
+
+    .figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .figure p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .notice {
+      padding: 20px;
+      border-left: 4px solid var(--olive);
+      background: #fffefa;
+      color: var(--muted);
+    }
+
+    .workflow {
+      padding-left: 22px;
+    }
+
+    .workflow li { padding: 5px 0; }
+
+    footer {
+      padding: 30px 0;
+      background: var(--green);
+      color: #f7f5ef;
+      font-size: 0.9rem;
+    }
+
+    footer a { color: white; }
+
+    @media (max-width: 700px) {
+      nav { align-items: flex-start; flex-direction: column; }
+      nav a { margin: 0 16px 0 0; }
+      .hero { padding: 60px 0; }
+      .grid { grid-template-columns: 1fr; }
+      section { padding: 45px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav>
+      <div class="brand">VibraSense</div>
+      <div>
+        <a href="#overview">Overview</a>
+        <a href="#features">Features</a>
+        <a href="#results">Results</a>
+        <a href="#workflow">Workflow</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="overview">
+    <div class="container">
+      <div class="eyebrow">Engineering · Signal Processing · GNU Octave</div>
+      <h1>Understanding vibration signals through data.</h1>
+      <p>
+        VibraSense is a vibration signal analysis project that combines
+        data validation, signal preprocessing, statistical feature extraction
+        and frequency-domain analysis in a reproducible workflow.
+      </p>
+      <div class="actions">
+        <a class="button" href="https://github.com/SRIDHARSHINI2030/VibraSense">
+          View source code
+        </a>
+        <a class="button secondary" href="#results">Explore the results</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <h2>What the project does</h2>
+      <p class="intro">
+        Each stage is implemented as a separate function so it can be
+        tested, inspected and reused independently.
+      </p>
+
+      <div class="grid">
+        <article class="card">
+          <h3>01. Data validation</h3>
+          <p>
+            Checks the input structure, missing or non-finite values,
+            time ordering and sampling consistency before analysis.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>02. Feature extraction</h3>
+          <p>
+            Calculates RMS, peak amplitude, peak-to-peak amplitude,
+            crest factor, standard deviation, energy, skewness and
+            excess kurtosis.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>03. Frequency analysis</h3>
+          <p>
+            Uses a Hann window and the Fast Fourier Transform (FFT)
+            to inspect the single-sided amplitude spectrum and
+            estimate dominant frequency.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>04. Condition assessment</h3>
+          <p>
+            Applies explicit, rule-based criteria to demonstrate
+            how extracted features can flag selected signal patterns.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>05. Testing</h3>
+          <p>
+            Includes checks for feature extraction, data validation,
+            assessment rules and spectral accuracy.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>06. Reproducible outputs</h3>
+          <p>
+            Generates CSV summaries, assessment reports and figures
+            through a single analysis script.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="technical" id="results">
+    <div class="container">
+      <h2>Analysis results</h2>
+      <p class="intro">
+        The demonstration dataset contains three synthetic vibration
+        signals: healthy-like, imbalance-like and impact-like.
+        The figures illustrate how their time and frequency patterns differ.
+      </p>
+
+      <div class="figure">
+        <img src="assets/synthetic_signals.png"
+             alt="Synthetic vibration signal examples">
+        <p>Generated synthetic signals used for demonstration.</p>
+      </div>
+
+      <div class="figure">
+        <img src="assets/time_domain_comparison.png"
+             alt="Time-domain comparison of three synthetic signals">
+        <p>Time-domain comparison of the three signal patterns.</p>
+      </div>
+
+      <div class="figure">
+        <img src="assets/frequency_comparison.png"
+             alt="Frequency spectra of three synthetic signals">
+        <p>Frequency-domain comparison using the FFT.</p>
+      </div>
+
+      <div class="notice">
+        <strong>Scope and limitations:</strong> These results use synthetic
+        data, not measurements from operating machinery. The condition
+        labels are illustrative rule-based outputs, not validated industrial
+        fault diagnoses. Real-world performance would require measured data
+        and appropriate validation.
+      </div>
+    </div>
+  </section>
+
+  <section id="workflow">
+    <div class="container">
+      <h2>Workflow</h2>
+      <p class="intro">
+        The analysis is organized into clear, modular stages.
+      </p>
+      <ol class="workflow">
+        <li>Generate or load the vibration dataset.</li>
+        <li>Validate the data and preprocess the signals.</li>
+        <li>Extract statistical and frequency-domain features.</li>
+        <li>Apply the demonstration condition-assessment rules.</li>
+        <li>Save reports, metrics and comparison plots.</li>
+        <li>Run the included tests to check key behaviours.</li>
+      </ol>
+
+      <div class="actions">
+        <a class="button"
+           href="https://github.com/SRIDHARSHINI2030/VibraSense">
+          Explore the repository on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p><strong>VibraSense</strong> · Vibration Signal Analysis and Condition Assessment</p>
+    <p>Built with GNU Octave. Demonstration project using synthetic data.</p>
+    <p><a href="https://github.com/SRIDHARSHINI2030/VibraSense">GitHub repository</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
