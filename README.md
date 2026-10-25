@@ -170,16 +170,21 @@ The current assessment is rule-based rather than machine-learning-based. It uses
 
 These rules are demonstration criteria, not universally valid fault thresholds. Their effectiveness has not been established using real machinery data.
 
-## Testing
 
-The repository includes test scripts for:
+The project includes tests for feature extraction, data validation, condition assessment, and spectral accuracy.
 
-- Feature extraction
-- Condition assessment
-- Input data validation
-- Spectral accuracy
+To run the tests, open GNU Octave, navigate to the project root, and execute each test script:
 
-The existing test suite has passed 12 checks in the development environment. Results may depend on the execution environment and the current version of the code.
+```matlab
+addpath('src');
+run('tests/testFeatureExtraction.m');
+run('tests/testDataValidation.m');
+run('tests/testConditionAssessment.m');
+run('tests/testSpectralAccuracy.m');
+```
+
+Run each script separately and check its output for failed checks or errors. The tests passed in the development environment; results may vary across Octave versions.
+
 
 ## Project Showcase
 
