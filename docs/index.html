@@ -212,10 +212,11 @@
     <nav>
       <div class="brand">VibraSense</div>
       <div>
-        <a href="#overview">Overview</a>
-        <a href="#features">Features</a>
-        <a href="#results">Results</a>
-        <a href="#workflow">Workflow</a>
+       <a href="#overview">Overview</a>
+       <a href="#features">Features</a>
+       <a href="#demo">Interactive Demo</a>
+       <a href="#results">Results</a>
+       <a href="#workflow">Workflow</a>
       </div>
     </nav>
   </div>
@@ -301,7 +302,58 @@
       </div>
     </div>
   </section>
+<section id="demo">
+  <div class="container">
+    <h2>Interactive Vibration Signal Explorer</h2>
+    <p class="intro">
+      Explore three synthetic vibration patterns and compare their
+      basic signal characteristics. All values are calculated in your browser.
+    </p>
 
+    <div class="card">
+      <label for="signalType"><strong>Select a signal pattern</strong></label>
+      <select id="signalType"
+        style="display:block;width:100%;max-width:420px;padding:12px;margin-top:10px;border:1px solid #e3e5dc;border-radius:6px;background:white;font-size:1rem;">
+        <option value="healthy">Healthy-like</option>
+        <option value="imbalance">Imbalance-like</option>
+        <option value="impact">Impact-like</option>
+      </select>
+
+      <div style="margin-top:25px;">
+        <canvas id="waveform"
+          role="img"
+          aria-label="Generated synthetic vibration waveform"
+          style="width:100%;height:260px;display:block;background:#fffefa;border:1px solid #e3e5dc;border-radius:8px;">
+        </canvas>
+      </div>
+
+      <div class="grid" style="margin-top:20px;">
+        <div class="card">
+          <p>RMS amplitude</p>
+          <h3 id="rmsValue">—</h3>
+        </div>
+        <div class="card">
+          <p>Peak amplitude</p>
+          <h3 id="peakValue">—</h3>
+        </div>
+        <div class="card">
+          <p>Dominant frequency</p>
+          <h3 id="frequencyValue">—</h3>
+        </div>
+      </div>
+
+      <p id="signalDescription" aria-live="polite" style="color:#69756e;margin-top:20px;">
+        Select a pattern to explore its characteristics.
+      </p>
+    </div>
+
+    <div class="notice" style="margin-top:20px;">
+      <strong>Demonstration only:</strong> This browser-based explorer
+      generates illustrative signals. It is separate from the GNU Octave
+      analysis pipeline and must not be used to diagnose real machinery.
+    </div>
+  </div>
+</section>
   <section class="technical" id="results">
     <div class="container">
       <h2>Analysis results</h2>
@@ -371,6 +423,162 @@
     <p><a href="https://github.com/SRIDHARSHINI2030/VibraSense">GitHub repository</a></p>
   </div>
 </footer>
+
+<script>
+(function () {
+  const selector = document.getElementById("signalType");
+  const canvas = document.getElementById("waveform");
+  const context = canvas.getContext("2d");
+
+  const rmsOutput = document.getElementById("rmsValue");
+  const peakOutput = document.getElementById("peakValue");
+  const frequencyOutput = document.getElementById("frequencyValue");
+  const descriptionOutput = document.getElementById("signalDescription");
+
+  const sampleRate = 1000;
+  const sampleCount = 1000;
+
+  function generateSignal(type) {
+    const values = [];
+
+    for (let i = 0; i < sampleCount; i++) {
+      const time = i / sampleRate;
+      let value = 0;
+
+      if (type === "healthy") {
+        value = 0.08 * Math.sin(2 * Math.PI * 25 * time)
+              + 0.015 * Math.sin(2 * Math.PI * 80 * time);
+      } else if (type === "imbalance") {
+        value = 0.45 * Math.sin(2 * Math.PI * 25 * time)
+              + 0.12 * Math.sin(2 * Math.PI * 50 * time);
+      } else {
+        value = 0.04 * Math.sin(2 * Math.PI * 25 * time);
+
+        // Add a short, decaying oscillation every 0.25 seconds.
+        const position = (time % 0.25);
+        if (position < 0.04) {
+          value += 0.9 * Math.exp(-position * 90)
+                 * Math.sin(2 * Math.PI * 120 * position);
+        }
+      }
+
+      values.push(value);
+    }
+
+    return values;
+  }
+
+  function drawWaveform(values) {
+    const width = canvas.clientWidth;
+    const height = 260;
+    const pixelRatio = window.devicePixelRatio || 1;
+
+    canvas.width = Math.round(width * pixelRatio);
+    canvas.height = Math.round(height * pixelRatio);
+    canvas.style.height = height + "px";
+
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    context.clearRect(0, 0, width, height);
+
+    const padding = 35;
+    const middle = height / 2;
+    const plotWidth = width - padding * 2;
+    const plotHeight = height - 55;
+    const maximum = Math.max(...values.map(v => Math.abs(v)), 0.01);
+
+    context.font = "12px Arial";
+    context.fillStyle = "#69756e";
+    context.strokeStyle = "#e3e5dc";
+    context.lineWidth = 1;
+
+    context.beginPath();
+    context.moveTo(padding, middle);
+    context.lineTo(width - padding, middle);
+    context.stroke();
+
+    context.fillText("Amplitude", 10, 18);
+    context.fillText("Time (seconds)", width - 115, height - 8);
+
+    context.strokeStyle = "#244b3c";
+    context.lineWidth = 1.8;
+    context.beginPath();
+
+    values.forEach((value, i) => {
+      const x = padding + (i / (values.length - 1)) * plotWidth;
+      const y = middle - (value / maximum) * (plotHeight / 2);
+
+      if (i === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
+    });
+
+    context.stroke();
+  }
+
+  function findDominantFrequency(values) {
+    // Direct frequency search at integer frequencies from 1 to 200 Hz.
+    // This is a simple demonstration, not a production FFT implementation.
+    let bestFrequency = 0;
+    let bestAmplitude = -1;
+
+    for (let frequency = 1; frequency <= 200; frequency++) {
+      let real = 0;
+      let imaginary = 0;
+
+      for (let i = 0; i < values.length; i++) {
+        const windowValue = 0.5 - 0.5 *
+          Math.cos(2 * Math.PI * i / (values.length - 1));
+        const angle = 2 * Math.PI * frequency * i / sampleRate;
+        real += values[i] * windowValue * Math.cos(angle);
+        imaginary -= values[i] * windowValue * Math.sin(angle);
+      }
+
+      const amplitude = Math.sqrt(real * real + imaginary * imaginary);
+
+      if (amplitude > bestAmplitude) {
+        bestAmplitude = amplitude;
+        bestFrequency = frequency;
+      }
+    }
+
+    return bestFrequency;
+  }
+
+  function updateDemo() {
+    const type = selector.value;
+    const values = generateSignal(type);
+
+    const meanSquare = values.reduce((sum, value) =>
+      sum + value * value, 0) / values.length;
+
+    const rms = Math.sqrt(meanSquare);
+    const peak = Math.max(...values.map(value => Math.abs(value)));
+    const dominantFrequency = findDominantFrequency(values);
+
+    rmsOutput.textContent = rms.toFixed(4);
+    peakOutput.textContent = peak.toFixed(4);
+    frequencyOutput.textContent = dominantFrequency + " Hz";
+
+    const descriptions = {
+      healthy: "Healthy-like pattern: a small periodic component with a low amplitude.",
+      imbalance: "Imbalance-like pattern: a stronger periodic component around 25 Hz.",
+      impact: "Impact-like pattern: short bursts with decaying oscillations."
+    };
+
+    descriptionOutput.textContent = descriptions[type];
+    drawWaveform(values);
+  }
+
+  selector.addEventListener("change", updateDemo);
+  window.addEventListener("resize", updateDemo);
+
+  updateDemo();
+})();
+</script>
+</body>
+</html>
 
 </body>
 </html>
