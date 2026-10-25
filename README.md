@@ -128,7 +128,9 @@ run('scripts/runVibraSense.m')
 
 The script adds the source directory to the Octave path, validates and preprocesses the dataset, generates assessment and comparison reports, and creates figures.
 
-The script uses the project location configured inside `scripts/runVibraSense.m`. If you extract the project to a different location, update the `projectRoot` variable in that script before running it.
+
+The script determines the project root from its own location, so the repository can be placed in a different folder without manually editing the project path.
+
 
 ### 4. Inspect the outputs
 
