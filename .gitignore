@@ -1,0 +1,11 @@
+﻿# Octave temporary and backup files
+*.asv
+*.bak
+octave-workspace
+
+# Operating system files
+Thumbs.db
+.DS_Store
+
+# Editor settings
+.vscode/

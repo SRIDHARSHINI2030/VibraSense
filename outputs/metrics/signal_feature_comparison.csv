@@ -1,0 +1,4 @@
+Signal,RMS,StandardDeviation,PeakAmplitude,CrestFactor,ExcessKurtosis,DominantFrequencyHz,SpectralCentroidHz
+Healthy-like,0.069310,0.069310,0.236841,3.417101,-0.697221,25.00,239.63
+Imbalance-like,0.328884,0.328884,0.602797,1.832859,-1.333944,25.00,192.49
+Impact-like,0.092383,0.092383,0.793460,8.588854,19.654735,120.00,208.09

@@ -1,0 +1,4 @@
+Signal,RMS,CrestFactor,ExcessKurtosis,DominantFrequencyHz,Assessment,Reason
+Healthy-like,0.069310,3.417101,-0.697221,25.00,"No rule-based concern identified","The illustrative rules did not identify a flagged pattern."
+Imbalance-like,0.328884,1.832859,-1.333944,25.00,"Strong 20-30 Hz component","A strong signal with a dominant component in the 20-30 Hz band was found."
+Impact-like,0.092383,8.588854,19.654735,120.00,"Impact-like pattern","High crest factor and excess kurtosis suggest impulsive behavior."
