@@ -7,7 +7,8 @@ clc;
 close all;
 
 % Define project folders.
-projectRoot = 'C:\VibraSense';
+scriptPath = mfilename('fullpath');
+projectRoot = fileparts(fileparts(scriptPath));
 sourceFolder = fullfile(projectRoot, 'src');
 dataFile = fullfile(projectRoot, 'data', 'processed', ...
     'synthetic_vibration_demo.csv');
