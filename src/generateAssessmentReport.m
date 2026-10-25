@@ -70,7 +70,7 @@ function reportTable = generateAssessmentReport(csvFile, outputFile)
             ExcessKurtosis(i), DominantFrequencyHz(i), ...
             Assessment{i}, Reason{i});
     end
-1111111111111111111
+
     fclose(fileID);
 
     fprintf('\nVibraSense assessment report saved successfully.\n');
